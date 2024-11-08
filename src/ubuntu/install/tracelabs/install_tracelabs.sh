@@ -12,7 +12,6 @@ apt-get install -y \
   faraday \
   fern-wifi-cracker \
   guymager \
-  hydra-gtk \
   legion \
   ophcrack \
   ophcrack-cli \
