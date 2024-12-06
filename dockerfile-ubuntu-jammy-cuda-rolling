@@ -59,11 +59,6 @@ RUN \
   chown -R 1000:0 /home/kasm-user && \
   rm -Rf ${INST_DIR}
 
-# Add kasm user to sudo and set password
-RUN apt-get install -y openssl && \
-    usermod -aG sudo kasm-user && \
-    echo "kasm-user:Hs2b#%totJXc%m" | chpasswd
-
 # Install NVIDIA CUDA Toolkit (example for GPU support)
 RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
