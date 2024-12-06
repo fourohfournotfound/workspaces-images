@@ -28,7 +28,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
                   /ubuntu/install/nextcloud/install_nextcloud.sh \
                   /ubuntu/install/remmina/install_remmina.sh \
                   /ubuntu/install/only_office/install_only_office.sh \
-                  /ubuntu/install/signal/install_signal.sh \
                   /ubuntu/install/gimp/install_gimp.sh \
                   /ubuntu/install/ansible/install_ansible.sh \
                   /ubuntu/install/terraform/install_terraform.sh \
