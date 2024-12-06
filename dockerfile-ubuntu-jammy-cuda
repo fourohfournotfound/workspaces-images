@@ -63,7 +63,7 @@ ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
 RUN export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
 
 # Install Anaconda3
-COPY ubuntu/install/miniconda/install_anaconda.sh /tmp/
+COPY /ubuntu/install/miniconda/install_anaconda.sh /tmp/
 RUN bash /tmp/install_anaconda.sh
 
 #added to fix conda packages failing to install and pip sometimes 7-10-24
