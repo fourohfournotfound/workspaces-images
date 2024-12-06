@@ -3,13 +3,13 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - release/1.15.0
-      - develop    # Trigger builds on pushes to the develop branch
+      - release/1.15.0  # Trigger builds on pushes to the release/1.15.0 branch
+      - develop         # Trigger builds on pushes to the develop branch
     tags:
-      - 'v*'       # Trigger builds on versioned tags (e.g., v1.0.0)
+      - 'v*'            # Trigger builds on versioned tags (e.g., v1.0.0)
   pull_request:
     branches:
-      - release/1.15.0       # Trigger builds for pull requests targeting the main branch
+      - release/1.15.0  # Trigger builds for pull requests targeting the release/1.15.0 branch
   schedule:
     - cron: "0 0 * * *" # Run daily at midnight (UTC)
 
