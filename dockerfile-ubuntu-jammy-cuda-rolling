@@ -40,7 +40,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Pull the latest base image to ensure updates
 # This ensures the base image is always up to date
-ARG BASE_TAG="develop"
+ARG BASE_TAG="1.15.0-rolling"
 RUN docker pull kasmweb/$BASE_IMAGE:$BASE_TAG
 
 # Update package lists and upgrade installed packages (but not the OS itself)
