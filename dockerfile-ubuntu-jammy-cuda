@@ -26,8 +26,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
                   /ubuntu/install/only_office/install_only_office.sh \
                   /ubuntu/install/signal/install_signal.sh \
                   /ubuntu/install/gimp/install_gimp.sh \
-                  /ubuntu/install/zoom/install_zoom.sh \
-                  /ubuntu/install/obs/install_obs.sh \
                   /ubuntu/install/ansible/install_ansible.sh \
                   /ubuntu/install/terraform/install_terraform.sh \
                   /ubuntu/install/telegram/install_telegram.sh \
