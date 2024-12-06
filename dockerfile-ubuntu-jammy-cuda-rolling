@@ -1,5 +1,5 @@
 # Use arguments for base image and tag
-ARG BASE_TAG="develop"
+ARG BASE_TAG="1.15.0-rolling"
 ARG BASE_IMAGE="core-ubuntu-jammy"
 FROM kasmweb/$BASE_IMAGE:$BASE_TAG
 
