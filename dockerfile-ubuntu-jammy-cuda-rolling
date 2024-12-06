@@ -1,0 +1,90 @@
+# Use arguments for base image and tag
+ARG BASE_TAG="develop"
+ARG BASE_IMAGE="core-ubuntu-jammy"
+FROM kasmweb/$BASE_IMAGE:$BASE_TAG
+
+# Switch to root user
+USER root
+
+# Set environment variables
+ENV HOME /home/kasm-default-profile
+ENV STARTUPDIR /dockerstartup
+WORKDIR $HOME
+
+### Environment configuration
+ENV DEBIAN_FRONTEND=noninteractive \
+    SKIP_CLEAN=true \
+    KASM_RX_HOME=$STARTUPDIR/kasmrx \
+    DONT_PROMPT_WSL_INSTALL="No_Prompt_please" \
+    INST_DIR=$STARTUPDIR/install \
+    INST_SCRIPTS="/ubuntu/install/tools/install_tools_deluxe.sh \
+                  /ubuntu/install/misc/install_tools.sh \
+                  /ubuntu/install/chrome/install_chrome.sh \
+                  /ubuntu/install/chromium/install_chromium.sh \
+                  /ubuntu/install/firefox/install_firefox.sh \
+                  /ubuntu/install/sublime_text/install_sublime_text.sh \
+                  /ubuntu/install/vs_code/install_vs_code.sh \
+                  /ubuntu/install/nextcloud/install_nextcloud.sh \
+                  /ubuntu/install/remmina/install_remmina.sh \
+                  /ubuntu/install/only_office/install_only_office.sh \
+                  /ubuntu/install/signal/install_signal.sh \
+                  /ubuntu/install/gimp/install_gimp.sh \
+                  /ubuntu/install/ansible/install_ansible.sh \
+                  /ubuntu/install/terraform/install_terraform.sh \
+                  /ubuntu/install/telegram/install_telegram.sh \
+                  /ubuntu/install/thunderbird/install_thunderbird.sh \
+                  /ubuntu/install/slack/install_slack.sh \
+                  /ubuntu/install/gamepad_utils/install_gamepad_utils.sh \
+                  /ubuntu/install/miniconda/install_anaconda.sh \
+                  /ubuntu/install/cleanup/cleanup.sh"
+
+# Pull the latest base image to ensure updates
+# This ensures the base image is always up to date
+ARG BASE_TAG="develop"
+RUN docker pull kasmweb/$BASE_IMAGE:$BASE_TAG
+
+# Update package lists and upgrade installed packages (but not the OS itself)
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    wget curl gnupg software-properties-common && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy installation scripts
+COPY ./src/ $INST_DIR
+
+# Run installation scripts
+RUN \
+  for SCRIPT in $INST_SCRIPTS; do \
+    bash ${INST_DIR}${SCRIPT} || exit 1; \
+  done && \
+  $STARTUPDIR/set_user_permission.sh $HOME && \
+  rm -f /etc/X11/xinit/Xclients && \
+  chown 1000:0 $HOME && \
+  mkdir -p /home/kasm-user && \
+  chown -R 1000:0 /home/kasm-user && \
+  rm -Rf ${INST_DIR}
+
+# Add kasm user to sudo and set password
+RUN apt-get install -y openssl && \
+    usermod -aG sudo kasm-user && \
+    echo "kasm-user:Hs2b#%totJXc%m" | chpasswd
+
+# Install NVIDIA CUDA Toolkit (example for GPU support)
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
+    dpkg -i cuda-keyring_1.1-1_all.deb && \
+    apt-get update && apt-get install -y cuda-toolkit-12-2 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda12.2/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+# Tag the build with the current date
+ARG BUILD_DATE=$(date +%Y%m%d)
+RUN echo "Build date: $BUILD_DATE"
+
+# Userspace runtime
+ENV HOME /home/kasm-user
+WORKDIR $HOME
+USER 1000
+
+# Default command
+CMD ["--tail-log"]
