@@ -20,6 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     INST_SCRIPTS="/ubuntu/install/tools/install_tools_deluxe.sh \
                   /ubuntu/install/miniconda/install_anaconda.sh \
                   #/ubuntu/install/misc/install_tools.sh \
+                  /ubuntu/install/vs_code/install_vs_code.sh \
                   #/ubuntu/install/chrome/install_chrome.sh \
                   #/ubuntu/install/chromium/install_chromium.sh \
                   /ubuntu/install/firefox/install_firefox.sh \
@@ -37,6 +38,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
                   /ubuntu/install/cleanup/cleanup.sh"
 
 # Update package lists and upgrade installed packages (but not the OS itself)
+src/ubuntu/install/vs_code/install_vs_code.sh
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     wget curl gnupg software-properties-common && \
