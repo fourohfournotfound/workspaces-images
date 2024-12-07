@@ -20,11 +20,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     INST_SCRIPTS="/ubuntu/install/tools/install_tools_deluxe.sh \
                   /ubuntu/install/miniconda/install_anaconda.sh \
                   #/ubuntu/install/misc/install_tools.sh \
-                  /ubuntu/install/vs_code/install_vs_code.sh \
+                  #/ubuntu/install/vs_code/install_vs_code.sh \
                   #/ubuntu/install/chrome/install_chrome.sh \
                   #/ubuntu/install/chromium/install_chromium.sh \
-                  /ubuntu/install/firefox/install_firefox.sh \
-                  /ubuntu/install/sublime_text/install_sublime_text.sh \
+                  #/ubuntu/install/firefox/install_firefox.sh \
+                  #/ubuntu/install/sublime_text/install_sublime_text.sh \
                   #/ubuntu/install/nextcloud/install_nextcloud.sh \
                   #/ubuntu/install/remmina/install_remmina.sh \
                   #/ubuntu/install/only_office/install_only_office.sh \
@@ -35,13 +35,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
                   #/ubuntu/install/thunderbird/install_thunderbird.sh \
                   #/ubuntu/install/slack/install_slack.sh \
                   #/ubuntu/install/gamepad_utils/install_gamepad_utils.sh \
-                  /ubuntu/install/cleanup/cleanup.sh"
+                  #/ubuntu/install/cleanup/cleanup.sh"
 
 # Update package lists and upgrade installed packages (but not the OS itself)
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    wget curl gnupg software-properties-common && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get upgrade -y && \
+    #apt-get install -y --no-install-recommends \
+    #wget curl gnupg software-properties-common && \
+    #apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy installation scripts
 COPY ./src/ $INST_DIR
