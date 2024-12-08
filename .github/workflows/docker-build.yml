@@ -46,7 +46,7 @@ jobs:
             variable29/desktop-ml:rolling
             variable29/desktop-ml:${{ env.SANITIZED_REF }}-rolling
           build-args: |
-            BASE_IMAGE=ubuntu-jammy-desktop
+            BASE_IMAGE=core-cuda-focal
             BASE_TAG=1.15.0-rolling
 
       - name: Verify Docker image (rolling)
@@ -86,7 +86,7 @@ jobs:
             variable29/desktop-ml:stable
             variable29/desktop-ml:${{ env.SANITIZED_REF }}-stable
           build-args: |
-            BASE_IMAGE=ubuntu-jammy-desktop
+            BASE_IMAGE=core-cuda-focal
             BASE_TAG=1.15.0
 
       - name: Verify Docker image (stable)
