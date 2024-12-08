@@ -1,5 +1,5 @@
-ARG BASE_TAG="1.15.0"
-ARG BASE_IMAGE="ubuntu-jammy-desktop"
+ARG BASE_TAG="1.15.0-rolling"
+ARG BASE_IMAGE="core-cuda-focal"
 FROM kasmweb/$BASE_IMAGE:$BASE_TAG
 
 USER root
@@ -54,11 +54,11 @@ RUN apt-get install openssl -y
 RUN usermod -aG sudo kasm-user
 RUN echo "kasm-user:Hs2b#%totJXc%m" | chpasswd
 
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && dpkg -i cuda-keyring_1.1-1_all.deb
-RUN apt-get update && apt-get install -y cuda-toolkit-12-2
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda12.2/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
-RUN export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
+#RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && dpkg -i cuda-keyring_1.1-1_all.deb
+#RUN apt-get update && apt-get install -y cuda-toolkit-12-2
+#ENV PATH /usr/local/nvidia/bin:/usr/local/cuda12.2/bin:${PATH}
+#ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+#RUN export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
 
 #added to fix conda packages failing to install and pip sometimes 7-10-24
 #RUN apt-get update && apt-get install -y software-properties-common
