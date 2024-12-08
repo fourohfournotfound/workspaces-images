@@ -38,10 +38,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
                   /ubuntu/install/cleanup/cleanup.sh"
 
 # Update package lists and upgrade installed packages (but not the OS itself)
-#RUN apt-get update && apt-get upgrade -y && \
-    #apt-get install -y --no-install-recommends \
-    #wget curl gnupg software-properties-common && \
-    #apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    wget curl gnupg software-properties-common && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy installation scripts
 COPY ./src/ $INST_DIR
