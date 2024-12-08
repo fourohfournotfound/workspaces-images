@@ -1,6 +1,6 @@
 # Use arguments for base image and tag
 ARG BASE_TAG="1.15.0"
-ARG BASE_IMAGE="ubuntu-jammy-desktop"
+ARG BASE_IMAGE="core-cuda-focal"
 FROM kasmweb/$BASE_IMAGE:$BASE_TAG
 
 # Switch to root user
