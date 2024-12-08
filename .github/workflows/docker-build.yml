@@ -38,11 +38,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 5: Build and push Docker image (rolling) without cache
+      # Step 5: Build and push Docker image (rolling)
       - name: Build and push Docker image (rolling)
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./dockerfile-ubuntu-jammy-cuda-rolling
           push: true
           no-cache: true
           tags: |
@@ -81,11 +82,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 5: Build and push Docker image (stable) without cache
+      # Step 5: Build and push Docker image (stable)
       - name: Build and push Docker image (stable)
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./dockerfile-ubuntu-jammy-cuda
           push: true
           no-cache: true
           tags: |
