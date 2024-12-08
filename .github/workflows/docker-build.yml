@@ -3,15 +3,15 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - release/1.15.0  # Trigger builds on pushes to this branch
-      - develop         # Trigger builds on pushes to the develop branch
+      - release/1.15.0
+      - develop
     tags:
-      - 'v*'            # Trigger builds on versioned tags (e.g., v1.0.0)
+      - 'v*'
   pull_request:
     branches:
-      - release/1.15.0  # Trigger builds for PRs targeting this branch
+      - release/1.15.0
   schedule:
-    - cron: "0 0 * * *" # Run daily at midnight (UTC)
+    - cron: "0 0 * * *"
 
 jobs:
   build-rolling:
@@ -19,31 +19,22 @@ jobs:
     environment: workspaces-images
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Sanitize the ref name (replace '/' with '-')
       - name: Sanitize ref name
         id: sanitize
         run: echo "SANITIZED_REF=$(echo ${GITHUB_REF_NAME} | tr '/' '-')" >> $GITHUB_ENV
 
-      # Step 3: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # Step 4: Pull the rolling base image (optional step, to ensure it's available)
-      - name: Pull rolling base image
-        run: docker pull kasmweb/core-ubuntu-jammy:1.15.0-rolling
-
-      # Step 5: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 6: Build and push Docker image (rolling)
       - name: Build and push Docker image (rolling)
         uses: docker/build-push-action@v4
         with:
@@ -57,7 +48,6 @@ jobs:
           build-args: |
             BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0-rolling
 
-      # Step 7: Verify the image (optional)
       - name: Verify Docker image (rolling)
         run: |
           docker pull variable29/desktop-ml:rolling
@@ -69,31 +59,22 @@ jobs:
     environment: workspaces-images
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Sanitize the ref name (replace '/' with '-')
       - name: Sanitize ref name
         id: sanitize
         run: echo "SANITIZED_REF=$(echo ${GITHUB_REF_NAME} | tr '/' '-')" >> $GITHUB_ENV
 
-      # Step 3: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # Step 4: Pull the stable base image (optional step)
-      - name: Pull stable base image
-        run: docker pull kasmweb/core-ubuntu-jammy:1.15.0
-
-      # Step 5: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 6: Build and push Docker image (stable)
       - name: Build and push Docker image (stable)
         uses: docker/build-push-action@v4
         with:
@@ -107,7 +88,6 @@ jobs:
           build-args: |
             BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0
 
-      # Step 7: Verify the image (stable)
       - name: Verify Docker image (stable)
         run: |
           docker pull variable29/desktop-ml:stable
