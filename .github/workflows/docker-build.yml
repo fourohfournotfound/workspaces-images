@@ -3,15 +3,15 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - release/1.15.0
-      - develop
+      - release/1.15.0  # Trigger builds on pushes to this branch
+      - develop         # Trigger builds on pushes to the develop branch
     tags:
-      - 'v*'
+      - 'v*'            # Trigger builds on versioned tags (e.g., v1.0.0)
   pull_request:
     branches:
       - release/1.15.0
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *" # Run daily at midnight (UTC)
 
 jobs:
   build-rolling:
@@ -46,13 +46,13 @@ jobs:
             variable29/desktop-ml:rolling
             variable29/desktop-ml:${{ env.SANITIZED_REF }}-rolling
           build-args: |
-            BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0-rolling
+            BASE_IMAGE=ubuntu-jammy-desktop
+            BASE_TAG=1.15.0-rolling
 
       - name: Verify Docker image (rolling)
         run: |
           docker pull variable29/desktop-ml:rolling
           docker run --rm variable29/desktop-ml:rolling nvcc --version || echo "CUDA not installed properly"
-
 
   build-stable:
     runs-on: ubuntu-latest
@@ -86,7 +86,8 @@ jobs:
             variable29/desktop-ml:stable
             variable29/desktop-ml:${{ env.SANITIZED_REF }}-stable
           build-args: |
-            BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0
+            BASE_IMAGE=ubuntu-jammy-desktop
+            BASE_TAG=1.15.0
 
       - name: Verify Docker image (stable)
         run: |
