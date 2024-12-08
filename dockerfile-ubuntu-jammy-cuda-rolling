@@ -6,17 +6,14 @@ FROM kasmweb/$BASE_IMAGE:$BASE_TAG
 # Switch to root user
 USER root
 
-# Set environment variables
-ENV HOME /home/kasm-default-profile
-ENV STARTUPDIR /dockerstartup
-WORKDIR $HOME
-
-### Environment configuration
-ENV DEBIAN_FRONTEND=noninteractive \
+# Combine ENV variables into one instruction to reduce layers
+ENV HOME=/home/kasm-default-profile \
+    STARTUPDIR=/dockerstartup \
+    DEBIAN_FRONTEND=noninteractive \
     SKIP_CLEAN=true \
-    KASM_RX_HOME=$STARTUPDIR/kasmrx \
+    KASM_RX_HOME=/dockerstartup/kasmrx \
     DONT_PROMPT_WSL_INSTALL="No_Prompt_please" \
-    INST_DIR=$STARTUPDIR/install \
+    INST_DIR=/dockerstartup/install \
     INST_SCRIPTS="/ubuntu/install/tools/install_tools_deluxe.sh \
                   /ubuntu/install/miniconda/install_anaconda.sh \
                   #/ubuntu/install/misc/install_tools.sh \
@@ -37,41 +34,46 @@ ENV DEBIAN_FRONTEND=noninteractive \
                   #/ubuntu/install/gamepad_utils/install_gamepad_utils.sh \
                   /ubuntu/install/cleanup/cleanup.sh"
 
-# Update package lists and upgrade installed packages (but not the OS itself)
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    wget curl gnupg software-properties-common && \
+WORKDIR $HOME
+
+# Update and upgrade, then install minimal packages in one RUN instruction.
+RUN set -eux; \
+    apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends wget curl gnupg software-properties-common && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy installation scripts
 COPY ./src/ $INST_DIR
 
 # Run installation scripts
-RUN \
+RUN set -eux; \
   for SCRIPT in $INST_SCRIPTS; do \
-    bash ${INST_DIR}${SCRIPT} || exit 1; \
+    bash "${INST_DIR}${SCRIPT}" || exit 1; \
   done && \
-  $STARTUPDIR/set_user_permission.sh $HOME && \
+  $STARTUPDIR/set_user_permission.sh "$HOME" && \
   rm -f /etc/X11/xinit/Xclients && \
-  chown 1000:0 $HOME && \
+  chown 1000:0 "$HOME" && \
   mkdir -p /home/kasm-user && \
   chown -R 1000:0 /home/kasm-user && \
-  rm -Rf ${INST_DIR}
+  rm -Rf "${INST_DIR}"
 
-# Install NVIDIA CUDA Toolkit (example for GPU support)
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb && \
+# Install NVIDIA CUDA Toolkit
+RUN set -eux; \
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
-    apt-get update && apt-get install -y cuda-toolkit-12-2 && \
+    rm cuda-keyring_1.1-1_all.deb && \
+    apt-get update && apt-get install -y --no-install-recommends cuda-toolkit-12-2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda12.2/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda12.2/bin:${PATH} \
+    LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
 # Tag the build with the current date
 ARG BUILD_DATE=$(date +%Y%m%d)
 RUN echo "Build date: $BUILD_DATE"
 
-# Userspace runtime
-ENV HOME /home/kasm-user
+# Switch back to non-root user
+ENV HOME=/home/kasm-user
 WORKDIR $HOME
 USER 1000
 
