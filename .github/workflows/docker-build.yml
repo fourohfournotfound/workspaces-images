@@ -16,6 +16,7 @@ on:
 jobs:
   build-rolling:
     runs-on: ubuntu-latest
+    environment: workspaces-images
 
     steps:
       # Step 1: Checkout the repository
@@ -37,7 +38,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 5: Build and push Docker image (rolling) with no-cache
+      # Step 5: Build and push Docker image (rolling) without cache
       - name: Build and push Docker image (rolling)
         uses: docker/build-push-action@v4
         with:
@@ -58,6 +59,7 @@ jobs:
 
   build-stable:
     runs-on: ubuntu-latest
+    environment: workspaces-images
 
     steps:
       # Step 1: Checkout the repository
@@ -79,7 +81,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 5: Build and push Docker image (stable) with no-cache
+      # Step 5: Build and push Docker image (stable) without cache
       - name: Build and push Docker image (stable)
         uses: docker/build-push-action@v4
         with:
