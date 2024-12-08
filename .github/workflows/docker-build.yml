@@ -3,13 +3,13 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - release/1.15.0  # Trigger builds on pushes to the release/1.15.0 branch
+      - release/1.15.0  # Trigger builds on pushes to this branch
       - develop         # Trigger builds on pushes to the develop branch
     tags:
       - 'v*'            # Trigger builds on versioned tags (e.g., v1.0.0)
   pull_request:
     branches:
-      - release/1.15.0  # Trigger builds for pull requests targeting the release/1.15.0 branch
+      - release/1.15.0  # Trigger builds for PRs targeting this branch
   schedule:
     - cron: "0 0 * * *" # Run daily at midnight (UTC)
 
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Sanitize ref name (replace '/' with '-')
+      # Step 2: Sanitize the ref name (replace '/' with '-')
       - name: Sanitize ref name
         id: sanitize
         run: echo "SANITIZED_REF=$(echo ${GITHUB_REF_NAME} | tr '/' '-')" >> $GITHUB_ENV
@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # Step 4: Pull the rolling base image
+      # Step 4: Pull the rolling base image (optional step, to ensure it's available)
       - name: Pull rolling base image
         run: docker pull kasmweb/core-ubuntu-jammy:1.15.0-rolling
 
@@ -63,6 +63,7 @@ jobs:
           docker pull variable29/desktop-ml:rolling
           docker run --rm variable29/desktop-ml:rolling nvcc --version || echo "CUDA not installed properly"
 
+
   build-stable:
     runs-on: ubuntu-latest
     environment: workspaces-images
@@ -72,7 +73,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Sanitize ref name (replace '/' with '-')
+      # Step 2: Sanitize the ref name (replace '/' with '-')
       - name: Sanitize ref name
         id: sanitize
         run: echo "SANITIZED_REF=$(echo ${GITHUB_REF_NAME} | tr '/' '-')" >> $GITHUB_ENV
@@ -84,7 +85,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # Step 4: Pull the stable base image
+      # Step 4: Pull the stable base image (optional step)
       - name: Pull stable base image
         run: docker pull kasmweb/core-ubuntu-jammy:1.15.0
 
