@@ -18,80 +18,82 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Step 2: Log in to Docker Hub
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      # Step 2: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    # Step 3: Pull the rolling base image
-    - name: Pull rolling base image
-      run: docker pull kasmweb/core-ubuntu-jammy:1.15.0-rolling
+      # Step 3: Pull the rolling base image
+      - name: Pull rolling base image
+        run: docker pull kasmweb/core-ubuntu-jammy:1.15.0-rolling
 
-    # Step 4: Set up Docker Buildx
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      # Step 4: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    # Step 5: Build and push Docker image (rolling)
-    - name: Build and push Docker image (rolling)
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          variable29/desktop-ml:rolling
-          variable29/desktop-ml:${{ github.ref_name }}-rolling
-        build-args: |
-          BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0-rolling
+      # Step 5: Build and push Docker image (rolling) with no-cache
+      - name: Build and push Docker image (rolling)
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          no-cache: true
+          tags: |
+            variable29/desktop-ml:rolling
+            variable29/desktop-ml:${{ github.ref_name }}-rolling
+          build-args: |
+            BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0-rolling
 
-    # Step 6: Verify the image (optional)
-    - name: Verify Docker image (rolling)
-      run: |
-        docker pull variable29/desktop-ml:rolling
-        docker run --rm variable29/desktop-ml:rolling nvcc --version || echo "CUDA not installed properly"
+      # Step 6: Verify the image (optional)
+      - name: Verify Docker image (rolling)
+        run: |
+          docker pull variable29/desktop-ml:rolling
+          docker run --rm variable29/desktop-ml:rolling nvcc --version || echo "CUDA not installed properly"
 
   build-stable:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Step 2: Log in to Docker Hub
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      # Step 2: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    # Step 3: Pull the stable base image
-    - name: Pull stable base image
-      run: docker pull kasmweb/core-ubuntu-jammy:1.15.0
+      # Step 3: Pull the stable base image
+      - name: Pull stable base image
+        run: docker pull kasmweb/core-ubuntu-jammy:1.15.0
 
-    # Step 4: Set up Docker Buildx
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      # Step 4: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    # Step 5: Build and push Docker image (stable)
-    - name: Build and push Docker image (stable)
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          variable29/desktop-ml:stable
-          variable29/desktop-ml:${{ github.ref_name }}-stable
-        build-args: |
-          BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0
+      # Step 5: Build and push Docker image (stable) with no-cache
+      - name: Build and push Docker image (stable)
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          no-cache: true
+          tags: |
+            variable29/desktop-ml:stable
+            variable29/desktop-ml:${{ github.ref_name }}-stable
+          build-args: |
+            BASE_IMAGE=kasmweb/core-ubuntu-jammy:1.15.0
 
-    # Step 6: Verify the image (optional)
-    - name: Verify Docker image (stable)
-      run: |
-        docker pull variable29/desktop-ml:stable
-        docker run --rm variable29/desktop-ml:stable nvcc --version || echo "CUDA not installed properly"
+      # Step 6: Verify the image (optional)
+      - name: Verify Docker image (stable)
+        run: |
+          docker pull variable29/desktop-ml:stable
+          docker run --rm variable29/desktop-ml:stable nvcc --version || echo "CUDA not installed properly"
